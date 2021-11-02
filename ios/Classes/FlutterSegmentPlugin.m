@@ -3,6 +3,7 @@
 #import <Segment/SEGContext.h>
 #import <Segment/SEGMiddleware.h>
 #import <Segment_Amplitude/SEGAmplitudeIntegrationFactory.h>
+@import AdSupport;
 
 @implementation FlutterSegmentPlugin
 // Contents to be appended to the context
@@ -309,6 +310,10 @@ static NSDictionary *_appendToContextMiddleware;
     BOOL isAmplitudeIntegrationEnabled = [[dict objectForKey: @"com.claimsforce.segment.ENABLE_AMPLITUDE_INTEGRATION"] boolValue];
     SEGAnalyticsConfiguration *configuration = [SEGAnalyticsConfiguration configurationWithWriteKey:writeKey];
     configuration.trackApplicationLifecycleEvents = trackApplicationLifecycleEvents;
+    configuration.enableAdvertisingTracking = YES;
+    configuration.adSupportBlock = ^{
+        return [[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString];
+    };
 
     if (isAmplitudeIntegrationEnabled) {
       [configuration use:[SEGAmplitudeIntegrationFactory instance]];
